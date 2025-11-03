@@ -18,7 +18,7 @@ delta_lda <- function (mu, sigma, pi_value, x) {
 
 }
 
-radient_descent <- function (func, alpha, x_int, y_int, iter, inverse=T){
+gradient_descent <- function (func, alpha, x_int, y_int, iter, inverse=T){
   partial_0 = D(func, "theta_0")
   partial_1 = D(func, "theta_1")
 
