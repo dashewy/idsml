@@ -4,7 +4,7 @@ install.packages("knitr")
 install.packages("rmarkdown")
 install.packages("fastmap")
 install.packages("e1071")
-install.packages(("pandoc"))
+install.packages("pandoc")
 
 library(caret)
 library(arm)
@@ -14,8 +14,10 @@ library(IMIFA)
 library(ggplot2)
 library(knitr)
 library(rmarkdown)
+library(pandoc)
 library(kernlab)
 library(e1071)
+library(tinytex)
 
 # uploading data
 data(iris)
@@ -304,14 +306,27 @@ print(qda_digit_conf_matrix)
 # and 2 when 8.
 
 # svm
-svm_digit_train <- train(
+svm_digit <- svm(
   x = num_28_train[, -1],
   y = num_28_train[, 1],
-  method = "lssvmLinear",
-  trControl = kfold,
-  preProcess = c("center", "scale", "pca"),
-  preProcessOptions = list(thresh = 0.8)
+  type = "C-classification",
+  kernel = "linear",
+  # increasing cost for soft margin
+  cost = 10
 )
+
+svm_digit_test <- predict(svm_digit, newdata = num_28_test[, -1])
+
+svm_digit_conf_mat <- confusionMatrix(
+  svm_digit_test,
+  reference = num_28_test[, 1]
+)
+print(svm_digit_conf_mat)
+
+# as we can see from this confusion matrix this model has an overall accuracy
+# of 95%. We can also see that this model has a sensitivity and specificity of
+# 95%. meaning that this model will equally misclassify the digit causing both
+# type I & II errors.
 
 # svm linear kernel
 svm_lin_digit_train <- train(
@@ -466,3 +481,11 @@ plot(
 # looking at these plots you can not distinguish the numbers from two priniple
 # components. looking at the varacince retention of two principle componenets
 # is only 22%, so this is not too suprising.
+
+# setting path for pandoc
+Sys.setenv(RSTUDIO_PANDOC = "/opt/homebrew/bin")
+# knit pdf
+rmarkdown::render(
+  "/Users/alex/stat_426_proj/stat_426_hw_11.r",
+  output_format = "pdf_document"
+)
