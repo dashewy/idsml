@@ -10,14 +10,18 @@ install.packages("arm")
 install.packages("lme4")
 install.packages("Rdpack")
 install.packages("dslabs")
+install.packages("tinytex")
 # calling nessecary libraries
+library(tinytex)
+library(languageserver)
 library(caret)
 library(datasets)
 library(ggplot2)
 library(lme4)
 library(arm)
 library(dslabs)
-
+library(rmarkdown)
+library(pandoc)
 # 3
 # gathering data from dataset package
 data(iris)
@@ -255,3 +259,12 @@ print(log_mnist_conf_matrix)
 
 # In general all of these metods stuggled to classify the number 2. The best
 # method tested was QDA.
+
+tinytex::install_tinytex()
+# setting path for pandoc
+Sys.setenv(RSTUDIO_PANDOC = "/opt/homebrew/bin")
+# knit pdf
+rmarkdown::render(
+  "/Users/alex/stat_426_proj/stat_426_hw_6.r",
+  output_format = "pdf_document"
+)

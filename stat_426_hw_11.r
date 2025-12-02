@@ -27,7 +27,6 @@ head(iris)
 summary(iris)
 
 # 1
-
 # uploading data
 data(USPSdigits)
 # looking at summary statistics
@@ -418,69 +417,41 @@ print(num_comp)
 # here we can see that we need 107 components to retain 95% of the varaince.
 
 top_two <- pca_dig$x[, 1:2]
-top_two
-# subsetting data into each digit
-num_1 <- top_two[train_dig[, 1] == 1, ]
-num_3 <- top_two[train_dig[, 1] == 3, ]
-num_4 <- top_two[train_dig[, 1] == 4, ]
-num_7 <- top_two[train_dig[, 1] == 7, ]
-num_8 <- top_two[train_dig[, 1] == 8, ]
-# random sample of 50
-num_1_fifty <- num_1[sample(nrow(num_1), size = 50), ]
-num_3_fifty <- num_3[sample(nrow(num_3), size = 50), ]
-num_4_fifty <- num_4[sample(nrow(num_4), size = 50), ]
-num_7_fifty <- num_7[sample(nrow(num_7), size = 50), ]
-num_8_fifty <- num_8[sample(nrow(num_8), size = 50), ]
 
-# plots
-plot(
-  num_1_fifty[, 1],
-  num_1_fifty[, 2],
-  pch = 19,
-  main = "number 1",
-  xlab = "first pca",
-  ylab = "second pca"
-)
+selected_digits <- c(1, 3, 4, 7, 8)
+pca_digits_data <- data.frame()
 
-plot(
-  num_3_fifty[, 1],
-  num_3_fifty[, 2],
-  pch = 19,
-  main = "number 3",
-  xlab = "first pca",
-  ylab = "second pca"
-)
+for (i in selected_digits) {
+  # subseting each digits with top two pc
+  num <- top_two[train_dig[, 1] == i, ]
+  # selecting 50 random data points
+  num_fifty <- num[sample(nrow(num), size = 50), ]
+  # making a dataframe to bind
+  row <- data.frame(
+    number = i,
+    x = num_fifty[, 1],
+    y = num_fifty[, 2]
+  )
+  pca_digits_data <- rbind(pca_digits_data, row)
+}
+# setting the labels as discrete values to use in the plot
+pca_digits_data_labels <- as.factor(pca_digits_data$number)
 
-plot(
-  num_4_fifty[, 1],
-  num_4_fifty[, 2],
-  pch = 19,
-  main = "number 4",
-  xlab = "first pca",
-  ylab = "second pca"
-)
+print(pca_digits_data)
+# plotting data
+ggplot(pca_digits_data, aes(x = x, y = y, color = pca_digits_data_labels)) +
+  geom_point(size = 4) +
+  scale_color_manual(values = c("red", "blue", "yellow", "green", "purple")) +
+  labs(
+    title = "Top Two PCA plot",
+    x = "first componenet",
+    y = "second componenet"
+  )
 
-plot(
-  num_7_fifty[, 1],
-  num_7_fifty[, 2],
-  pch = 19,
-  main = "number 7",
-  xlab = "first pca",
-  ylab = "second pca"
-)
-
-plot(
-  num_8_fifty[, 1],
-  num_8_fifty[, 2],
-  pch = 19,
-  main = "number 8",
-  xlab = "first pca",
-  ylab = "second pca"
-)
-
-# looking at these plots you can not distinguish the numbers from two priniple
-# components. looking at the varacince retention of two principle componenets
-# is only 22%, so this is not too suprising.
+# looking at these plots you can not distinguish the numbers from each other
+# using only the first two principle components. looking at the varacince
+# retention of the two principle components we see it is only 22%,
+# so this is not too suprising.
 
 # setting path for pandoc
 Sys.setenv(RSTUDIO_PANDOC = "/opt/homebrew/bin")
