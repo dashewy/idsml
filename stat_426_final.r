@@ -801,8 +801,8 @@ freg_predict <- predict(freg_model, newdata = test_house)
 # getting rmse
 root_error_freg <- RMSE(test_house$Price, freg_predict)
 root_error_freg
-# the root mean square error is 1458435, which is around twice the training
-# set. which is roughly 3x worse than the training set.
+# the root mean square error is 721836, which is slightly less than
+#  the training set.
 
 freg_resid <- data.frame(
   Actual = test_house$Price,
@@ -829,7 +829,7 @@ ggplot(freg_resid, aes(x = Predicted, y = Residual)) +
 # houses in the data set.
 
 # clear plot
-dev.off()
+# dev.off()
 # using ridge regression instead
 set.seed(123)
 rid_reg_model <- train(
@@ -857,8 +857,8 @@ rid_reg_predict <- predict(rid_reg_model, newdata = test_house)
 # getting rmse
 root_error_rid_reg <- RMSE(test_house$Price, rid_reg_predict)
 root_error_rid_reg
-# the root mean square error is 1753173, which almost triple of the training
-# set. this is not better than the feature selection model.
+# the root mean square error is 597953, which is less than the
+# training set, and less than the feature selection model.
 
 rid_resid <- data.frame(
   Actual = test_house$Price,
@@ -875,7 +875,7 @@ ggplot(rid_resid, aes(x = Predicted, y = Residual)) +
   theme_minimal() +
   labs(
     title = "Residuals vs Predicted Values",
-    subtitle = "Best subset regression (leapSeq)",
+    subtitle = "Best subset regression (ridge)",
     x = "Predicted Price",
     y = "Residual (Actual - Predicted)"
   )
@@ -885,7 +885,7 @@ ggplot(rid_resid, aes(x = Predicted, y = Residual)) +
 # outlier error points.
 
 # clear plot
-dev.off()
+# dev.off()
 # using lasso ridge
 lasso_reg_model <- train(
   Price ~ (.)^2,
@@ -916,9 +916,8 @@ lasso_reg_predict <- predict(lasso_reg_model, newdata = test_house)
 # getting rmse
 root_error_lasso_reg <- RMSE(test_house$Price, lasso_reg_predict)
 root_error_lasso_reg
-# the root mean square error is 1667073, which slightly less than triple of the
-# training set. This is better than the ridge, but not better than
-# feature selection.
+# the root mean square error is 818616, which is more than the training
+# set. This is worse than the feature selection, and worse than ridge
 
 las_resid <- data.frame(
   Actual = test_house$Price,
@@ -935,7 +934,7 @@ ggplot(las_resid, aes(x = Predicted, y = Residual)) +
   theme_minimal() +
   labs(
     title = "Residuals vs Predicted Values",
-    subtitle = "Best subset regression (leapSeq)",
+    subtitle = "Best subset regression (lasso)",
     x = "Predicted Price",
     y = "Residual (Actual - Predicted)"
   )
@@ -956,7 +955,7 @@ error_frame <- data.frame(
   lasso = c(root_error_lasso_reg, rownames(las_feat))
 )
 error_frame
-# looking at this table it seems that feature selection regeression has
+# looking at this table it seems that ridge regeression has
 # the lowest error and will be the best model to use for this dataset.
 # We can also see that the all the models did not get much from the
 # lattitide and longitude features in the dataset.
