@@ -531,7 +531,7 @@ pca_svm_rbf_ovr_train <- train_one_vs_rest(
   kernel = "radial",
   func = "svm"
 )
-# ----------------------------NULL PREDICT---------------------------
+
 pca_svm_rbf_ovr_pred <- predict_one_vs_rest(
   pca_svm_rbf_ovr_train,
   pca_dig_test,
